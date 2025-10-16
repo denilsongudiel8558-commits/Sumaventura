@@ -1,2 +1,0 @@
-# Sumaventura
-proyecto final
