@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SumaAventura 🚀</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: white;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    overflow-y: auto;
+  }
+
+  /* Fondo espacial */
+  .espacio {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at bottom, #000010, #000);
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .estrella {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: parpadeo 2s infinite alternate;
+  }
+
+  @keyframes parpadeo {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+  }
+
+  .meteorito {
+    position: absolute;
+    top: -100px; left: -100px;
+    width: 120px; height: 5px;
+    background: linear-gradient(45deg, white, transparent);
+    transform: rotate(45deg);
+    animation: caer 6s linear infinite;
+  }
+
+  @keyframes caer {
+    from { transform: translate(0,0) rotate(45deg); }
+    to { transform: translate(120vw,120vh) rotate(45deg); }
+  }
+
+  header {
+    text-align: center;
+    padding: 30px;
+    font-size: 2.5em;
+    color: #00ffff;
+    text-shadow: 0 0 15px #00ffff, 0 0 30px #ff00ff;
+  }
+
+  /* Barra de temas */
+  .temas {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .temas button {
+    background: linear-gradient(90deg, #00ffff, #ff00ff);
+    border: none;
+    border-radius: 15px;
+    padding: 15px 25px;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;
+    transition: 0.3s;
+  }
+
+  .temas button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(90deg, #39ff14, #ff00ff);
+  }
+
+  /* Secciones ocultas */
+  .contenido {
+    display: none;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 20px;
+    box-shadow: 0 0 25px #00ffff, 0 0 40px #ff00ff;
+    text-align: center;
+  }
+
+  .contenido img {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #00ffff;
+    margin-top: 20px;
+  }
+
+  .boton-jugar {
+    display: block;
+    margin: 50px auto;
+    padding: 20px 60px;
+    font-size: 1.5em;
+    background: linear-gradient(90deg, #00ffff, #ff00ff);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 10px white;
+    box-shadow: 0 0 25px #00ffff, 0 0 50px #ff00ff;
+    transition: 0.3s;
+  }
+
+  .boton-jugar:hover {
+    transform: scale(1.1);
+    background: linear-gradient(90deg, #39ff14, #ff00ff);
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: #ccc;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+  <!-- Fondo animado -->
+  <div class="espacio">
+    <div class="estrella" style="top:10%; left:20%"></div>
+    <div class="estrella" style="top:30%; left:50%"></div>
+    <div class="estrella" style="top:70%; left:80%"></div>
+    <div class="estrella" style="top:40%; left:10%"></div>
+    <div class="estrella" style="top:90%; left:60%"></div>
+    <div class="estrella" style="top:50%; left:90%"></div>
+    <div class="meteorito"></div>
+  </div>
+
+  <header>🌌 SumaAventura 🚀</header>
+
+  <!-- Botones de temas -->
+  <div class="temas">
+    <button onclick="mostrarTema('matematicas')">🧮 Matemáticas</button>
+    <button onclick="mostrarTema('lenguaje')">✏️ Lenguaje</button>
+    <button onclick="mostrarTema('ingles')">🇬🇧 Inglés</button>
+    <button onclick="mostrarTema('especial')">💫 Mundo Especial</button>
+  </div>
+
+  <!-- Secciones de información -->
+  <div id="matematicas" class="contenido">
+    <h2>🧮 Matemáticas</h2>
+    <p>Aprende sumas, restas y lógica con divertidos juegos como rompecabezas, laberintos y un cómic final.</p>
+    <img src="mat.jpeg" alt="Matemáticas">
+  </div>
+
+  <div id="lenguaje" class="contenido">
+    <h2>✏️ Lenguaje</h2>
+    <p>Practica lectura, escritura y vocabulario con historias cortas, sílabas y juegos visuales.</p>
+    <img src="imagenes/lenguaje.png" alt="Lenguaje">
+  </div>
+
+  <div id="ingles" class="contenido">
+    <h2>🇬🇧 Inglés</h2>
+    <p>Aprende los colores, números y animales en inglés con actividades de memoria y pronunciación.</p>
+    <img src="imagenes/ingles.png" alt="Inglés">
+  </div>
+
+  <div id="especial" class="contenido">
+    <h2>💫 Mundo Especial</h2>
+    <p>Un espacio adaptado para niños con discapacidades. Juegos con sonidos, imágenes grandes e instrucciones visuales.</p>
+    <img src="imagenes/especial.png" alt="Mundo Especial">
+  </div>
+
+  <!-- Botón Jugar -->
+  <button class="boton-jugar" onclick="location.href='juego.html'">🚀 Jugar</button>
+
+  <footer>© 2025 SumaAventura | Creado con amor para todos los niños 🌈</footer>
+
+  <script>
+    function mostrarTema(id) {
+      document.querySelectorAll('.contenido').forEach(div => div.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

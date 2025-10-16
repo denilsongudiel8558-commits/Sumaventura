@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Quiénes somos? | SumAventura</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+      background: #000;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      background: radial-gradient(ellipse at bottom, #283e51 0%, #485563 100%);
+      animation: spaceMove 20s linear infinite;
+    }
+    @keyframes spaceMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+    .espacio {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .estrella {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+      opacity: 0.7;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+    .meteorito {
+      position: absolute;
+      top: -100px; left: -100px;
+      width: 120px; height: 5px;
+      background: linear-gradient(45deg, white, transparent);
+      transform: rotate(45deg);
+      animation: caer 6s linear infinite;
+    }
+    @keyframes caer {
+      from { transform: translate(0,0) rotate(45deg); }
+      to { transform: translate(120vw,120vh) rotate(45deg); }
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 40px 20px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 20px;
+      box-shadow: 0 0 32px #222;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #ffd700;
+      text-shadow: 0 0 6px #fff4;
+    }
+    .description {
+      text-align: center;
+      font-size: 1.15em;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
+    .mv-section {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .mv-block {
+      flex: 1 1 220px;
+      background: rgba(40,62,81,0.7);
+      padding: 18px;
+      border-radius: 15px;
+      box-shadow: 0 0 12px #222;
+      min-width: 220px;
+      max-width: 400px;
+    }
+    .mv-block h2 {
+      font-size: 1.2em;
+      color: #9be7ff;
+      margin-bottom: 10px;
+    }
+    .mv-block p {
+      font-size: 1em;
+      color: #eee;
+    }
+    .team-section {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+    .team-card {
+      background: rgba(40,62,81,0.8);
+      border-radius: 15px;
+      padding: 16px;
+      text-align: center;
+      width: 210px;
+      box-shadow: 0 0 10px #222;
+      transition: transform 0.2s;
+      margin-bottom: 10px;
+    }
+    .team-card:hover {
+      transform: scale(1.05);
+    }
+    .team-card img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #fff2;
+      margin-bottom: 10px;
+      border: 2px solid #ffd700;
+      background: #fff;
+    }
+    .team-card .role {
+      font-weight: bold;
+      color: #ffd700;
+      margin-bottom: 8px;
+      font-size: 1em;
+    }
+    .team-card .name {
+      font-size: 1.05em;
+      color: #9be7ff;
+    }
+    .team-card .desc {
+      font-size: 0.95em;
+      margin-top: 8px;
+      color: #eee;
+    }
+    .next-btn {
+      display: block;
+      margin: 0 auto;
+      margin-top: 20px;
+      padding: 14px 35px;
+      font-size: 1em;
+      background: linear-gradient(90deg,#ffd700,#9be7ff);
+      color: #1a2236;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 10px #fff2;
+      transition: background 0.2s;
+    }
+    .next-btn:hover {
+      background: linear-gradient(90deg,#9be7ff,#ffd700);
+    }
+    @media (max-width: 700px) {
+      .container { padding: 12px 3vw 20px 3vw;}
+      .mv-section, .team-section { flex-direction: column; gap: 12px;}
+      .team-card { width: 95vw; max-width: 370px; margin: 0 auto 10px auto;}
+      h1 {font-size: 1.6em;}
+      .description {font-size: 1em;}
+      .mv-block {min-width: 0; max-width: 100vw;}
+    }
+    @media (max-width: 450px) {
+      .container {padding: 1px 0 20px 0;}
+      h1 {font-size: 1.1em;}
+      .description {font-size: 0.95em;}
+      .team-card img {width: 55px; height:55px;}
+      .next-btn {font-size: 0.95em; padding: 10px 17vw;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Fondo animado -->
+  <div class="espacio">
+    <div class="estrella" style="top:10%; left:20%"></div>
+    <div class="estrella" style="top:30%; left:50%"></div>
+    <div class="estrella" style="top:70%; left:80%"></div>
+    <div class="estrella" style="top:40%; left:10%"></div>
+    <div class="estrella" style="top:90%; left:60%"></div>
+    <div class="estrella" style="top:50%; left:90%"></div>
+    <div class="meteorito"></div>
+  </div>
+  <div class="container">
+    <h1>¿Quiénes somos?</h1>
+    <div class="description">
+      <strong>SumAventura</strong> es un juego interactivo diseñado especialmente para niños y niñas de <b>6 años</b>, combinando actividades motoras y cognitivas bajo un divertido entorno espacial. Nuestro objetivo es facilitar el aprendizaje de matemáticas, lógica y coordinación motriz a través de juegos, retos y aventuras que estimulan la creatividad y el entusiasmo por descubrir.
+    </div>
+    <div class="mv-section">
+      <div class="mv-block">
+        <h2>Misión</h2>
+        <p>
+          Desarrollar experiencias educativas lúdicas que potencien el aprendizaje y el desarrollo motor de los niños, promoviendo la curiosidad, el trabajo en equipo y el bienestar integral.
+        </p>
+      </div>
+      <div class="mv-block">
+        <h2>Visión</h2>
+        <p>
+          Ser referentes en videojuegos educativos para la infancia, inspirando a nuevas generaciones a aprender jugando y a explorar el mundo con entusiasmo y responsabilidad.
+        </p>
+      </div>
+    </div>
+    <h2 style="text-align:center;color:#ffd700; margin-bottom:18px;">Nuestro equipo</h2>
+    <div class="team-section">
+      <div class="team-card">
+        <img src="WhatsApp Image 2025-10-15 at 9.19.22 PM.jpeg" alt="Foto Programador">
+        <div class="role">Programador</div>
+        <div class="name">Oscar Martinez</div>
+        <div class="desc">Desarrolló la arquitectura y la lógica del juego, asegurando la mejor experiencia interactiva para los niños. También optimizó el rendimiento y la seguridad de la aplicación.</div>
+      </div>
+      <div class="team-card">
+        <img src="WhatsApp Image 2025-10-15 at 9.12.57 PM.jpeg" alt="Foto Diseñadora">
+        <div class="role">Diseñadora</div>
+        <div class="name">Ariadne Contreras</div>
+        <div class="desc">Encargada de los gráficos, colores y personajes, creó el universo visual espacial y amigable que acompaña cada aventura.</div>
+      </div>
+      <div class="team-card">
+        <img src="WhatsApp Image 2025-10-15 at 9.11.43 PM.jpeg" alt="Foto Escritor">
+        <div class="role">Escritor</div>
+        <div class="name">Paolo Maaz</div>
+        <div class="desc">Ideó las historias, retos y diálogos del juego, fomentando valores positivos y el interés por aprender jugando.</div>
+      </div>
+    </div>
+    <button class="next-btn" onclick="window.location.href='index.html'">Siguiente</button>
+  </div>
+</body>
+</html>

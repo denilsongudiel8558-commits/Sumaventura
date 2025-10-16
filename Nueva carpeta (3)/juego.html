@@ -1,0 +1,595 @@
+<!doctype html> 
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sumaventura 🚀</title>
+  <style>
+    :root{ --bg:#03031a; --card:#0b1026; --neon1:#00ffd5; --neon2:#ff6cff; --soft:#cfe8ff; }
+    *{ box-sizing:border-box;
+      font-family:Inter, system-ui, Arial, sans-serif;
+      font-size:18px;
+    }
+    body{
+      margin:0;
+      background:radial-gradient(circle at 10% 10%, #071028 0%, var(--bg) 50%), #000;
+      color:var(--soft);
+      min-height:100vh
+    }
+    header{padding:14px 18px;display:flex;align-items:center;gap:12px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .badge{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--neon1),var(--neon2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#001}
+    h1{margin:0;font-size:20px}
+    .container{max-width:1100px;margin:14px auto;padding:18px}
+    .game-shell{display:grid;grid-template-columns:320px 1fr;gap:16px}
+    .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+    .main{background:linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:520px}
+    .card{background:rgba(255,255,255,0.015);padding:12px;border-radius:10px;margin-bottom:12px}
+    label{display:block;font-size:13px;opacity:0.9;margin-top:8px}
+    input[type=text], input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--soft)}
+    button{padding:9px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--neon1),var(--neon2));color:rgb(246, 246, 250);font-weight:700;cursor:pointer}
+    .worlds{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+    .world{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px}
+    .planet{width:64px;height:64px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+    .ring{position:absolute;border-radius:50%;width:110%;height:110%;left:-5%;top:-5%}
+    .levels{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+    .level{width:50px;height:50px;border-radius:12px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.05);cursor:pointer;font-size:18px;margin-bottom:6px}
+    .level.locked{filter:grayscale(1);opacity:0.45;cursor:not-allowed}
+    .level.completed{background:linear-gradient(90deg,var(--neon1),var(--neon2));color:#001;font-weight:700}
+    .progress{height:18px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+    .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon1),var(--neon2));transition:width .6s}
+    .stage-title{display:flex;align-items:center;gap:12px}
+    .stage-canvas{margin-top:12px;background:rgba(255,255,255,0.01);border-radius:10px;padding:12px;min-height:320px}
+    .row{display:flex;gap:25px}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--soft)}
+    .hint{font-size:13px;opacity:0.85}
+    .planet.math{background:radial-gradient(circle at 30% 30%, #b6ff00 0%, #3dffb0 40%, #037a6b 100%);box-shadow:0 0 18px rgba(123,255,0,0.18)}
+    .planet.leng{background:radial-gradient(circle at 30% 30%, #fffb00 0%, #ff9f00 45%, #7a3f00 100%);box-shadow:0 0 18px rgba(255,160,0,0.18)}
+    .planet.ing{background:radial-gradient(circle at 30% 30%, #00b3ff 0%, #6f00ff 60%);box-shadow:0 0 18px rgba(0,200,255,0.14)}
+    .planet.special{background:radial-gradient(circle at 30% 30%, #ff00e1 0%, #00ffd0 70%);box-shadow:0 0 22px rgba(255,0,200,0.14)}
+    .planet{animation:spin 12s linear infinite}
+    .ring{animation:ring 8s linear infinite}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    @keyframes ring{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+    .custom-logo { width: 150px; height: auto; border-radius: 12px; box-shadow: 0 0 18px #00ffff; display: block; margin-left: auto; margin-right: auto; }
+    .puzzle-area { display: flex; gap: 16px; justify-content: center; align-items: flex-start; flex-wrap: wrap; margin-top: 12px; }
+    .puzzle-canvas { display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 12px; box-shadow: 0 0 12px rgba(0, 255, 213, 0.1); }
+    .pieces-pool { display: flex; flex-wrap: wrap; gap: 6px; min-height: 100px; background: rgba(255, 255, 255, 0.03); padding: 8px; border-radius: 10px; border: 1px dashed rgba(255, 255, 255, 0.08); }
+    .piece { border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; cursor: grab; transition: transform 0.2s; }
+    .piece:active { transform: scale(1.1); }
+    .slot { border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 6px; background: rgba(255, 255, 255, 0.02); display: flex; align-items: center; justify-content: center; }
+    .slot:hover { border-color: var(--neon1); }
+    .pregunta, #pregunta { font-size: 28px; font-weight: bold; }
+
+    /* === RESPONSIVE DESIGN FOR MOBILE === */
+    @media (max-width: 900px) {
+      .container {
+        max-width: 100vw;
+        margin: 0;
+        padding: 8px;
+      }
+      .game-shell {
+        display: block;
+      }
+      .sidebar, .main {
+        border-radius: 10px;
+        margin-bottom: 18px;
+        padding: 10px;
+      }
+      .sidebar {
+        margin-bottom: 14px;
+      }
+      .main {
+        min-height: 350px;
+      }
+      .stage-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .custom-logo {
+        width: 100px;
+      }
+      .planet, .ring {
+        width: 48px;
+        height: 48px;
+      }
+      .levels, .row {
+        gap: 10px;
+      }
+      .level {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+      .puzzle-area {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .puzzle-canvas {
+        padding: 6px;
+      }
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 16px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+      }
+      .badge {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      h1 {
+        font-size: 17px;
+      }
+      .main {
+        padding: 8px;
+      }
+      .stage-title {
+        gap: 4px;
+      }
+      .custom-logo {
+        width: 68px;
+      }
+      .planet, .ring {
+        width: 36px;
+        height: 36px;
+      }
+      .level, .slot {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+      .pieces-pool {
+        padding: 4px;
+      }
+    }
+
+    /* Touchable targets for mobile */
+    button, .level, .piece {
+      touch-action: manipulation;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="badge">SV</div>
+      <div>
+        <h1>Sumaventura</h1>
+        <div style="font-size:12px;opacity:0.8">Aventuras educativas — Niños 6 años</div>
+      </div>
+    </div>
+    <div style="margin-left:auto; display:flex; gap:8px; align-items:center">
+      <button id="audioToggle" class="btn-ghost">🔊</button>
+    </div>
+    <audio id="bgAudio" loop>
+      <source src="musica.mpeg" type="audio/mpeg">
+    </audio>
+  </header>
+
+  <div class="container">
+    <div class="game-shell">
+      <aside class="sidebar">
+        <div class="card" id="loginCard">
+          <h3>Iniciar sesión</h3>
+          <audio id="welcomeAudio">
+              <source src="WhatsApp Audio 2025-10-15 at 7.12.37 PM.mpeg" type="audio/mpeg">
+              Tu navegador no soporta el elemento de audio.
+          </audio>
+          <div id="loggedAs" style="display:none">
+            <div>Bienvenido, <strong id="userNameShow"></strong></div>
+            <div style="margin-top:8px"><button class="btn-ghost" id="logoutBtn">Cerrar sesión</button></div>
+          </div>
+          <div id="loginForm">
+            <label>Nombre</label>
+            <input id="userName" type="text" placeholder="Ej: Mateo" />
+            <label>Contraseña (opcional)</label>
+            <input id="userPass" type="password" placeholder="1234" />
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button id="loginBtn">Entrar</button>
+              <button id="guestBtn" class="btn-ghost">Jugar como invitado</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="progress-wrap">
+            <strong>Progreso global</strong>
+            <div class="progress" aria-label="barra de progreso"><i id="progressBar"></i></div>
+            <div class="meta" style="margin-top:8px"><span id="progressText">0 / 20</span><span id="progressPercent">0%</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <strong>Mundos</strong>
+          <div class="worlds" id="worldList"></div>
+        </div>
+
+        <div class="card">
+          <strong>Instrucciones</strong>
+          <p class="hint">Selecciona un mundo y luego un nivel. Nivel 1 de Matemáticas es un rompecabezas de cohete (usa <code>rocket.png</code> en la misma carpeta) o sube otra imagen.</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="stage-title">
+          <div style="width:72px;height:72px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center">
+            <div id="stagePlanet" style="width:56px;height:56px;border-radius:10px"></div>
+          </div>
+          <div>
+            <img src="rompecabezas resuelto.jpeg" alt="Logo personalizado" class="custom-logo">
+
+            <h2 id="stageTitle">Bienvenido a Sumaventura</h2>
+            <div style="font-size:13px;opacity:0.8" id="stageSub">Inicia sesión y elige un mundo</div>
+          </div>
+        </div>
+
+        <div class="stage-canvas" id="stageCanvas">
+          <div id="stageIntro" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px">
+            <h3>¡Listo para aprender y jugar?</h3>
+            <p class="hint">Escoge un planeta en la barra izquierda para ver los niveles.</p>
+          </div>
+
+          <div id="gameArea" style="display:none"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // ==== AUDIO CONTROL CON LOOP DE 5 SEGUNDOS ====
+    const welcomeAudio = document.getElementById('welcomeAudio');
+    const bgAudio = document.getElementById('bgAudio');
+    const audioToggle = document.getElementById('audioToggle');
+    let welcomeInterval = null;
+
+    audioToggle.addEventListener('click', () => {
+      if(bgAudio.paused){
+        bgAudio.play();
+        audioToggle.textContent = '🔊';
+      } else {
+        bgAudio.pause();
+        audioToggle.textContent = '🔇';
+      }
+    });
+
+    function playWelcomeAudioLoop() {
+      if (!welcomeAudio) return;
+      if (welcomeInterval) clearTimeout(welcomeInterval);
+
+      function loopAudio() {
+        welcomeAudio.currentTime = 0;
+        welcomeAudio.play();
+        welcomeAudio.onended = () => {
+          welcomeInterval = setTimeout(loopAudio, 5000);
+        };
+      }
+      loopAudio();
+    }
+    function stopWelcomeAudio() {
+      if (welcomeAudio) {
+        welcomeAudio.pause();
+        welcomeAudio.currentTime = 0;
+        welcomeAudio.onended = null;
+      }
+      if (welcomeInterval) {
+        clearTimeout(welcomeInterval);
+        welcomeInterval = null;
+      }
+    }
+
+    playWelcomeAudioLoop();
+
+    // ==== DATOS Y ESTADO ====
+    const WORLDS = [
+      {id:'math', name:'Matemáticas', emoji:'➕', hint:'Suma, rompecabezas y más', className:'math'},
+      {id:'leng', name:'Lenguaje', emoji:'🔤', hint:'Letras y palabras', className:'leng'},
+      {id:'eng', name:'Inglés', emoji:'🇬🇧', hint:'Palabras sencillas', className:'ing'},
+      {id:'spec', name:'Mundo especial', emoji:'✨', hint:'Juegos de lógica y memoria', className:'special'}
+    ];
+    const LEVELS_PER_WORLD = 5;
+    const TOTAL_LEVELS = WORLDS.length * LEVELS_PER_WORLD;
+    let state = { user: null, progress: {} };
+    function saveState(){ if(state.user && !state.user.guest){ try{ localStorage.setItem('sumaventura_state_'+state.user.name, JSON.stringify(state)); }catch(e){} } }
+    function loadStateForUser(name){ try{ const raw=localStorage.getItem('sumaventura_state_'+name); return raw?JSON.parse(raw):null; }catch(e){return null} }
+
+    // ==== REFERENCIAS UI ====
+    const worldList = document.getElementById('worldList');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const stageTitle = document.getElementById('stageTitle');
+    const stageSub = document.getElementById('stageSub');
+    const stagePlanet = document.getElementById('stagePlanet');
+    const stageIntro = document.getElementById('stageIntro');
+    const gameArea = document.getElementById('gameArea');
+
+    // ==== LOGIN ====
+    document.getElementById('loginBtn').addEventListener('click', ()=>{
+      const name = document.getElementById('userName').value.trim();
+      if(!name) return alert('Escribe un nombre');
+      const pass = document.getElementById('userPass').value;
+      state.user = {name, pass};
+      const prev = loadStateForUser(name);
+      if(prev) state = Object.assign(prev, {user: state.user});
+      else saveState();
+      localStorage.setItem('sumaventura_last_user', name);
+      stopWelcomeAudio();
+      if(bgAudio) { bgAudio.currentTime = 0; bgAudio.play(); }
+      onLogin();
+    });
+    document.getElementById('guestBtn').addEventListener('click', ()=>{
+      const name='invitado_'+Math.floor(Math.random()*9999);
+      state.user={name, guest:true};
+      saveState();
+      stopWelcomeAudio();
+      if(bgAudio) { bgAudio.currentTime = 0; bgAudio.play(); }
+      onLogin();
+    });
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      state={user:null, progress:{}};
+      saveState();
+      renderLoggedOut();
+      buildWorlds();
+      playWelcomeAudioLoop();
+      if(bgAudio) { bgAudio.pause(); bgAudio.currentTime = 0; }
+    });
+    function onLogin(){
+      document.getElementById('loginForm').style.display='none';
+      document.getElementById('loggedAs').style.display='block';
+      document.getElementById('userNameShow').textContent = state.user.name;
+      buildWorlds();
+    }
+    function renderLoggedOut(){
+      document.getElementById('loginForm').style.display='block';
+      document.getElementById('loggedAs').style.display='none';
+      document.getElementById('userName').value='';
+      document.getElementById('userPass').value='';
+      stageIntro.style.display='block';
+      gameArea.style.display='none';
+      stageTitle.textContent='Bienvenido a Sumaventura';
+      stageSub.textContent='Inicia sesión y elige un mundo';
+      stagePlanet.innerHTML='';
+    }
+
+    // ==== MUNDOS Y NIVELES ====
+    function buildWorlds(){
+      worldList.innerHTML='';
+      WORLDS.forEach((w,wi)=>{
+        const el=document.createElement('div');
+        el.className='world';
+        const prevWorldCompleted = wi===0 ? true : isWorldCompleted(WORLDS[wi-1].id);
+        el.dataset.locked = (!prevWorldCompleted)?'true':'false';
+        el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;width:100%">
+          <div class="planet ${w.className}" title="${w.name}">
+            <div style="font-size:20px">${w.emoji}</div>
+            <div class="ring"></div>
+          </div>
+          <div style="flex:1">
+            <h3>${w.name}</h3>
+            <div class="levels" data-world="${w.id}"></div>
+          </div>
+        </div>`;
+        worldList.appendChild(el);
+        const levelsWrap = el.querySelector('.levels');
+        for(let i=1;i<=LEVELS_PER_WORLD;i++){
+          const lv=document.createElement('div');
+          lv.className='level';
+          lv.textContent=i;
+          const key=w.id+'_'+i;
+          if(state.progress[key]) lv.classList.add('completed');
+          const prevLevelDone = (i===1)?true:!!state.progress[w.id+'_'+(i-1)];
+          if(el.dataset.locked==='true' || !prevLevelDone) lv.classList.add('locked');
+          lv.addEventListener('click', ()=> openLevel(w,i, el.dataset.locked==='true' || lv.classList.contains('locked')));
+          levelsWrap.appendChild(lv);
+        }
+      });
+      updateProgressUI();
+    }
+    function isWorldCompleted(worldId){
+      for(let i=1;i<=LEVELS_PER_WORLD;i++)
+        if(!state.progress[worldId+'_'+i]) return false;
+      return true;
+    }
+    function updateProgressUI(){
+      const done = Object.keys(state.progress).filter(k=>state.progress[k]).length;
+      const pct = Math.round(done / TOTAL_LEVELS * 100);
+      progressBar.style.width = pct+'%';
+      progressText.textContent = done + ' / ' + TOTAL_LEVELS;
+      progressPercent.textContent = pct+'%';
+    }
+
+    // ==== NIVELES Y MINI-JUEGOS ====
+    function openLevel(world, levelNumber, locked){
+      if(locked) return alert('Este nivel está bloqueado. Completa anteriores.');
+      stageIntro.style.display='none';
+      gameArea.style.display='block';
+      stageTitle.textContent = `${world.name} — Nivel ${levelNumber}`;
+      stageSub.textContent = world.hint;
+      stagePlanet.innerHTML = `<div style="font-size:24px">${world.emoji}</div>`;
+      gameArea.innerHTML='';
+      const fn = getMiniGameFunction(world.id, levelNumber);
+      if(fn) fn(world,levelNumber);
+    }
+    function markCompleted(worldId, levelNum){
+      state.progress[worldId+'_'+levelNum]=true;
+      saveState();
+      buildWorlds();
+      const msg=document.createElement('div');
+      msg.className='card';
+      msg.style.marginTop='12px';
+      msg.innerHTML=`<div style="font-size:18px">¡Nivel completado! 🎉</div>
+        <div style="margin-top:8px"><button id='okClose' class='btn-ghost'>OK</button></div>`;
+      gameArea.appendChild(msg);
+      document.getElementById('okClose').onclick=()=>{ gameArea.innerHTML=''; stageIntro.style.display='block'; }
+    }
+
+    function getMiniGameFunction(worldId, lvl){
+      const map = {
+        'math_1': math_puzzle_rocket, 'math_2': math_simple_add, 'math_3': math_simple_sub, 'math_4': math_compare, 'math_5': math_order_numbers,
+        'leng_1': leng_letter_start,'leng_2': leng_complete_word,'leng_3': leng_syllable_order,'leng_4': leng_match_image_word,'leng_5': leng_vowel_identify,
+        'eng_1': eng_match_image_word,'eng_2': eng_listen_and_choose,'eng_3': eng_write_simple,'eng_4': eng_flashcards_mem,'eng_5': eng_simple_translate,
+        'spec_1': spec_memory_pairs,'spec_2': spec_maze_simple,'spec_3': spec_jigsaw_small,'spec_4': spec_coloring_simple,'spec_5': spec_riddle_fun
+      };
+      return map[worldId+'_'+lvl];
+    }
+
+    // ==== MINI-JUEGOS MATEMÁTICAS ====
+    async function math_puzzle_rocket(world,lvl){
+      const container=document.createElement('div'); container.className='puzzle-area';
+      const left=document.createElement('div'); left.className='puzzle-canvas';
+      const right=document.createElement('div'); right.style.flex='1';
+      // controls: difficulty and image loader
+      const controls=document.createElement('div'); controls.style.display='flex'; controls.style.gap='8px'; controls.style.alignItems='center';
+      controls.innerHTML = `
+        <label class='hint'>Piezas: </label>
+        <select id='puzzleSize'><option value='2'>4 piezas (2x2)</option><option value='3'>9 piezas (3x3)</option></select>
+        <label class='hint' style='margin-left:12px'>Imagen (rocket.png por defecto)</label>
+        <input type='file' id='puzzleImageFile' accept='image/*' style='margin-left:8px'>
+      `;
+      right.appendChild(controls);
+      const info=document.createElement('div'); info.className='hint'; info.style.marginTop='8px'; info.textContent='Arrastra las piezas al lugar correcto.'; right.appendChild(info);
+      const pool=document.createElement('div'); pool.className='pieces-pool'; pool.style.marginTop='12px'; right.appendChild(pool);
+      left.appendChild(document.createElement('div'));
+      container.appendChild(left); container.appendChild(right); gameArea.appendChild(container);
+
+      // create canvas for solution grid
+      const gridCanvas = document.createElement('div'); gridCanvas.style.display='grid'; gridCanvas.style.gap='8px'; gridCanvas.style.background='transparent';
+      left.innerHTML=''; left.appendChild(gridCanvas);
+
+      // load default image (rocket.png in same folder) or user-upload
+      const img = new Image(); img.crossOrigin='anonymous';
+      const defaultPath = 'rocket.png';
+      let currentURL = defaultPath;
+      function loadImageFromFile(file){ return new Promise((res,rej)=>{ const url = URL.createObjectURL(file); const im = new Image(); im.onload = ()=>{ res(im); }; im.onerror=rej; im.src = url; }); }
+      function loadDefault(){ return new Promise((res,rej)=>{ img.onload = ()=> res(img); img.onerror = ()=> rej(); img.src = defaultPath; }); }
+
+      async function buildPuzzle(size){
+        pool.innerHTML=''; gridCanvas.innerHTML='';
+        gridCanvas.style.gridTemplateColumns = `repeat(${size}, auto)`;
+        const maxDisplay = 240; const scale = Math.min(1, maxDisplay / img.width);
+        const dispW = Math.round(img.width * scale); const dispH = Math.round(img.height * scale);
+        const pieceW = Math.floor(dispW / size); const pieceH = Math.floor(dispH / size);
+        const pieces = [];
+        for(let r=0;r<size;r++){
+          for(let c=0;c<size;c++){
+            const canvas = document.createElement('canvas'); canvas.width = pieceW; canvas.height = pieceH; const ctx = canvas.getContext('2d'); ctx.drawImage(img, c* (img.width/size), r* (img.height/size), img.width/size, img.height/size, 0,0, pieceW, pieceH);
+            canvas.className='piece'; canvas.draggable=true;
+            canvas.dataset.pieceIndex = r*size + c;
+            canvas.style.width = pieceW + 'px'; canvas.style.height = pieceH + 'px';
+            pieces.push(canvas);
+          }
+        }
+        const slots = [];
+        for(let i=0;i<pieces.length;i++){
+          const slot = document.createElement('div'); slot.className='slot'; slot.dataset.slotIndex = i; slot.style.width = pieceW + 'px'; slot.style.height = pieceH + 'px';
+          slot.addEventListener('dragover', e=>e.preventDefault());
+          slot.addEventListener('drop', e=>{
+            e.preventDefault();
+            const idx = e.dataTransfer.getData('text/plain');
+            const pieceEl = document.querySelector('[data-piece-index="'+idx+'"]');
+            if(!pieceEl) return;
+            if(slot.firstChild) { pool.appendChild(slot.firstChild); }
+            slot.innerHTML=''; slot.appendChild(pieceEl); checkComplete();
+          });
+          slots.push(slot); gridCanvas.appendChild(slot);
+        }
+        // shuffle pieces into pool
+        const shuffled = shuffleArray(pieces.slice());
+        shuffled.forEach(p=>{
+          p.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', p.dataset.pieceIndex); setTimeout(()=>p.style.opacity=0.5,0); });
+          p.addEventListener('dragend', ()=>p.style.opacity=1);
+          pool.appendChild(p);
+        });
+        pool.addEventListener('click', e=>{
+          const el = e.target.closest('.piece'); if(!el) return;
+          const empty = slots.find(s=>!s.firstChild);
+          if(!empty){ alert('No hay más espacio vacío. Puedes cambiar piezas arrastrando.'); return; }
+          empty.appendChild(el); checkComplete();
+        });
+
+        function checkComplete(){
+          const filled = slots.every(s=>s.firstChild);
+          if(!filled) return;
+          const good = slots.every(s=> s.firstChild && s.firstChild.dataset.pieceIndex==s.dataset.slotIndex);
+          if(good){ setTimeout(()=> markCompleted(world.id, lvl), 200); }
+        }
+      }
+
+      try{ await loadDefault(); }catch(e){ console.warn('rocket.png no encontrado en la carpeta. Puedes subir tu imagen'); }
+      const fileInput = controls.querySelector('#puzzleImageFile');
+      fileInput.addEventListener('change', async (ev)=>{
+        const f = ev.target.files[0]; if(!f) return;
+        try{
+          const im = await loadImageFromFile(f);
+          img.src = im.src; await new Promise(r=>img.onload=r);
+          const size = parseInt(controls.querySelector('#puzzleSize').value,10);
+          buildPuzzle(size);
+        }catch(err){ alert('No se pudo cargar la imagen'); }
+      });
+      controls.querySelector('#puzzleSize').addEventListener('change', ()=>{
+        const size = parseInt(controls.querySelector('#puzzleSize').value,10);
+        if(!img.src) return;
+        buildPuzzle(size);
+      });
+      img.onload = ()=>{
+        const size = parseInt(controls.querySelector('#puzzleSize').value,10);
+        buildPuzzle(size);
+      }
+      img.onerror = ()=>{ /* ignore */ }
+    }
+
+    function math_simple_add(world,lvl){ const a=randInt(1,5+lvl), b=randInt(0,5+lvl), correct=a+b; const q=document.createElement('div'); q.innerHTML=`<h3>Suma</h3><p class='hint'>¿Cuánto es ${a} + ${b}?</p>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; const options=shuffleArray([correct, correct+1, Math.max(0,correct-1), correct+2]).slice(0,4); options.forEach(o=>{ const btn=document.createElement('button'); btn.className='level'; btn.textContent=o; btn.onclick=()=>{ if(o===correct) markCompleted(world.id,lvl); else alert('Sigue intentando 😊'); }; row.appendChild(btn); }); q.appendChild(row); gameArea.appendChild(q); }
+    function math_simple_sub(world,lvl){ const a=randInt(2,6+lvl), b=randInt(0,a-1), res=a-b; const q=document.createElement('div'); q.innerHTML=`<h3>Resta</h3><p class='hint'>¿Cuánto es ${a} - ${b} ?</p>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; const opts=shuffleArray([res, res+1, Math.max(0,res-1), res+2]).slice(0,4); opts.forEach(o=>{ const bt=document.createElement('button'); bt.className='level'; bt.textContent=o; bt.onclick=()=>{ if(o===res) markCompleted(world.id,lvl); else alert('Inténtalo otra vez 😊'); }; row.appendChild(bt); }); q.appendChild(row); gameArea.appendChild(q); }
+    function math_compare(world,lvl){ const a=randInt(1,9), b=randInt(1,9); const q=document.createElement('div'); q.innerHTML=`<h3>¿Cuál es mayor?</h3><p class='hint'>Selecciona el símbolo correcto</p>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; const opts=[['>', a>b], ['<', a<b], ['=', a===b]]; opts.forEach(([sym,correct])=>{ const bt=document.createElement('button'); bt.className='level'; bt.textContent=sym; bt.onclick=()=>{ if(correct) markCompleted(world.id,lvl); else alert('No es correcto, prueba otra vez'); }; row.appendChild(bt); }); q.appendChild(document.createElement('div')).textContent = `${a}    ?    ${b}`; q.appendChild(row); gameArea.appendChild(q); }
+    function math_order_numbers(world,lvl){ const arr=[randInt(1,9),randInt(1,9),randInt(1,9)]; const correct = arr.slice().sort((a,b)=>a-b).join(','); const q=document.createElement('div'); q.innerHTML=`<h3>Ordena de menor a mayor</h3><p class='hint'>Toca los números en el orden correcto</p>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const choices=shuffleArray(arr.slice()); choices.forEach(n=>{ const b=document.createElement('button'); b.className='level'; b.textContent=n; b.onclick=()=>{ if(!q._picked) q._picked=[]; q._picked.push(n); b.disabled=true; b.style.opacity=0.6; if(q._picked.length===choices.length){ if(q._picked.join(',')===correct) markCompleted(world.id,lvl); else{ alert('Casi! Intenta de nuevo'); setTimeout(()=>{ q._picked=[]; Array.from(row.children).forEach(ch=>{ ch.disabled=false; ch.style.opacity=1; }); },200); } } }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+
+    // ==== MINI-JUEGOS LENGUAJE ====
+    function leng_letter_start(world,lvl){ const bank=[['Manzana','🍎'],['Perro','🐶'],['Sol','☀️'],['Casa','🏠'],['Pelota','⚽️'],['Gato','🐱'],['Pera','🍐']]; const pick=bank[randInt(0,bank.length-1)]; const correct=pick[0][0].toUpperCase(); const choices=shuffleArray([correct, randomLetter(), randomLetter(), randomLetter()]).slice(0,4); const q=document.createElement('div'); q.innerHTML=`<h3>¿Con qué letra empieza <strong>${pick[1]} ${pick[0]}</strong>?</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; choices.forEach(ch=>{ const b=document.createElement('button'); b.className='level'; b.textContent=ch; b.onclick=()=>{ if(ch===correct) markCompleted(world.id,lvl); else alert('Casi, inténtalo otra vez 😊'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function leng_complete_word(world,lvl){ const bank=[['_ANA','MANANA','🌞'],['_ATO','GATO','🐱'],['CA_A','CARA','🙂'],['PE_A','PERA','🍐']]; const pick=bank[randInt(0,bank.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Completa la palabra</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; const opts=shuffleArray([pick[1], 'XXXX', 'ZZZZ', 'ABCD']).slice(0,4); opts.forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.textContent=o; b.onclick=()=>{ if(o===pick[1]) markCompleted(world.id,lvl); else alert('Intenta de nuevo'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function leng_syllable_order(world,lvl){ const items=[['Glo','bo','PALA🎈'], ['CA','SA','CASA🏡'], ['Sa','po','sapo🐸']]; const pick=items[randInt(0,items.length-1)]; const correct=pick[2]; const parts=shuffleArray([pick[0], pick[1]]); const q=document.createElement('div'); q.innerHTML=`<h3>Une las sílabas</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; parts.forEach(p=>{ const b=document.createElement('button'); b.className='level'; b.textContent=p; b.onclick=()=>{ if(!q._picked) q._picked=[]; q._picked.push(p); b.disabled=true; if(q._picked.join('')===correct) markCompleted(world.id,lvl); else if(q._picked.length===2) alert('No es correcto, inténtalo de nuevo'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function leng_match_image_word(world,lvl){ const bank=[['Perro','🐶'],['Manzana','🍎'],['Casa','🏠'],['Sol','☀️']]; const pick=bank[randInt(0,bank.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Une la imagen con la palabra</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='22px'; const opts=shuffleArray(bank.map(b=>b[0])); opts.forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.textContent=o; b.onclick=()=>{ if(o===pick[0]) markCompleted(world.id,lvl); else alert('Prueba otra vez'); }; row.appendChild(b); }); q.appendChild(document.createElement('div')).textContent=pick[1]; q.appendChild(row); gameArea.appendChild(q); }
+    function leng_vowel_identify(world,lvl){ const letters=['A','E','I','O','U']; const pick=letters[randInt(0,letters.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Identifica la vocal</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const opts=shuffleArray(letters).slice(0,4); opts.forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.textContent=o; b.onclick=()=>{ if(o===pick) markCompleted(world.id,lvl); else alert('Intenta otra vez'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+
+    // ==== MINI-JUEGOS INGLÉS ====
+    function eng_match_image_word(world,lvl){ const bank=[['cat','🐱'],['dog','🐶'],['sun','☀️'],['apple','🍎']]; const pick=bank[randInt(0,bank.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Which one is <strong>${pick[0]}</strong>?</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const opts=shuffleArray(bank.map(b=>b[1])); opts.forEach(ch=>{ const b=document.createElement('button'); b.className='level'; b.style.fontSize='22px'; b.textContent=ch; b.onclick=()=>{ if(ch===pick[1]) markCompleted(world.id,lvl); else alert('Try again 😊'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function eng_listen_and_choose(world,lvl){ const bank=['cat','dog','sun','ball','apple']; const pick=bank[randInt(0,bank.length-1)]; const map={'cat':'🐱','dog':'🐶','sun':'☀️','ball':'⚽️','apple':'🍎'}; const q=document.createElement('div'); q.innerHTML=`<h3>Find <strong>${pick}</strong></h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const opts=shuffleArray(Object.values(map)).slice(0,4); if(!opts.includes(map[pick])) opts[0]=map[pick]; opts.forEach(ch=>{ const b=document.createElement('button'); b.className='level'; b.style.fontSize='22px'; b.textContent=ch; b.onclick=()=>{ if(ch===map[pick]) markCompleted(world.id,lvl); else alert('Try again'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function eng_write_simple(world,lvl){ const bank=['cat','dog','sun','ball','apple']; const pick=bank[randInt(0,bank.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Write the word</h3>`; const img=document.createElement('div'); img.style.fontSize='48px'; img.textContent = {'cat':'🐱','dog':'🐶','sun':'☀️','ball':'⚽️','apple':'🍎'}[pick]; const input=document.createElement('input'); input.type='text'; input.placeholder='write here'; input.style.marginTop='12px'; input.style.padding='8px'; input.style.borderRadius='8px'; input.style.width='200px'; const btn=document.createElement('button'); btn.textContent='Check'; btn.style.marginLeft='8px'; btn.onclick=()=>{ if(input.value.trim().toLowerCase()===pick) markCompleted(world.id,lvl); else alert('Try again'); }; q.appendChild(img); q.appendChild(input); q.appendChild(btn); gameArea.appendChild(q); }
+    function eng_flashcards_mem(world,lvl){ const bank=[['cat','🐱'],['dog','🐶'],['sun','☀️'],['apple','🍎']]; const subset=shuffleArray(bank).slice(0,3); const q=document.createElement('div'); q.innerHTML=`<h3>Memorize these</h3>`; const wrap=document.createElement('div'); wrap.className='row'; wrap.style.marginTop='12px'; subset.forEach(s=>{ const c=document.createElement('div'); c.className='level'; c.style.fontSize='22px'; c.textContent=s[1]+' '+s[0]; wrap.appendChild(c); }); q.appendChild(wrap); gameArea.appendChild(q); setTimeout(()=>{ gameArea.innerHTML=''; const ask=subset[randInt(0,subset.length-1)]; const q2=document.createElement('div'); q2.innerHTML=`<h3>Which was ${ask[0]}?</h3>`; const row2=document.createElement('div'); row2.className='row'; row2.style.marginTop='12px'; const opts=shuffleArray(['🐱','🐶','☀️','🍎']).slice(0,4); if(!opts.includes(ask[1])) opts[0]=ask[1]; opts.forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.style.fontSize='22px'; b.textContent=o; b.onclick=()=>{ if(o===ask[1]) markCompleted(world.id,lvl); else alert('Try again'); }; row2.appendChild(b); }); q2.appendChild(row2); gameArea.appendChild(q2); },3000); }
+    function eng_simple_translate(world,lvl){ const bank=[['gato','cat'],['perro','dog'],['sol','sun'],['manzana','apple']]; const pick=bank[randInt(0,bank.length-1)]; const q=document.createElement('div'); q.innerHTML=`<h3>Traduce: <strong>${pick[0]}</strong></h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const opts=shuffleArray([pick[1], 'xxx', 'yyy', 'zzz']).slice(0,4); opts.forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.textContent=o; b.onclick=()=>{ if(o===pick[1]) markCompleted(world.id,lvl); else alert('Casi!'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+
+    // ==== MINI-JUEGOS ESPECIAL ====
+    function spec_memory_pairs(world,lvl){ const emojis=['🍓','🍌','🐸','🚗','⭐️','🍪']; const pairs=shuffleArray(emojis).slice(0,3 + (lvl%3)); const board=shuffleArray([...pairs,...pairs]); const grid=document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(4,1fr)'; grid.style.gap='8px'; const cards=[]; board.forEach((em,i)=>{ const c=document.createElement('button'); c.className='level'; c.style.height='64px'; c.dataset.index=i; c.textContent='❓'; c.onclick=()=> flipCard(c,em); cards.push({el:c,emoji:em,flipped:false,matched:false}); grid.appendChild(c); }); gameArea.appendChild(document.createElement('h3')).textContent='Encuentra las parejas'; gameArea.appendChild(grid); let first=null, second=null, matches=0; function flipCard(cardEl, em){ const cardObj=cards[cardEl.dataset.index]; if(cardObj.matched||cardObj.flipped) return; cardObj.flipped=true; cardEl.textContent=em; if(!first) first=cardObj; else if(!second){ second=cardObj; if(first.emoji===second.emoji){ first.matched=true; second.matched=true; matches++; first=second=null; if(matches===board.length/2) markCompleted(world.id,lvl);} else { setTimeout(()=>{ first.el.textContent='❓'; second.el.textContent='❓'; first.flipped=false; second.flipped=false; first=second=null; },700) } } }
+    }
+    function spec_maze_simple(world,lvl){ const path=['→','→','↑']; const q=document.createElement('div'); q.innerHTML=`<h3>Ayuda a la nave</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; const moves=['→','←','↑','↓']; moves.forEach(m=>{ const b=document.createElement('button'); b.className='level'; b.textContent=m; b.onclick=()=>{ if(!q._seq) q._seq=[]; q._seq.push(m); if(q._seq.length===3){ if(q._seq.join('')===path.join('')) markCompleted(world.id,lvl); else{ alert('No funcionó. Intenta otra secuencia'); q._seq=[]; } } }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function spec_jigsaw_small(world,lvl){ const pieces=['🧩1','🧩2','🧩3']; const correct=pieces.slice(); const shuffled=shuffleArray(pieces); const q=document.createElement('div'); q.innerHTML=`<h3>Arma el rompecabezas</h3>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; shuffled.forEach(p=>{ const b=document.createElement('button'); b.className='level'; b.textContent=p; b.onclick=()=>{ if(!q._picked) q._picked=[]; q._picked.push(p); b.disabled=true; if(q._picked.join(',')===correct.join(',')) markCompleted(world.id,lvl); else if(q._picked.length===3 && q._picked.join(',')!==correct.join(',')){ alert('No es correcto'); setTimeout(()=>{ q._picked=[]; Array.from(row.children).forEach(ch=>{ ch.disabled=false; }); },200); } }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function spec_coloring_simple(world,lvl){ const q=document.createElement('div'); q.innerHTML=`<h3>Colorea la estrella</h3>`; const img=document.createElement('div'); img.style.fontSize='48px'; img.textContent='⭐️'; q.appendChild(img); const colors=['Amarillo','Rojo','Azul','Verde']; const correct='Amarillo'; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; colors.forEach(c=>{ const b=document.createElement('button'); b.className='level'; b.textContent=c; b.onclick=()=>{ if(c===correct) markCompleted(world.id,lvl); else alert('Prueba otro color'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+    function spec_riddle_fun(world,lvl){ const q=document.createElement('div'); q.innerHTML=`<h3>Adivinanza</h3><p class='hint'>¿Qué cosa tiene hojas pero no es libro?</p>`; const row=document.createElement('div'); row.className='row'; row.style.marginTop='12px'; ['Árbol','Casa','Coche','Sol'].forEach(o=>{ const b=document.createElement('button'); b.className='level'; b.textContent=o; b.onclick=()=>{ if(o==='Árbol') markCompleted(world.id,lvl); else alert('Intenta otra vez'); }; row.appendChild(b); }); q.appendChild(row); gameArea.appendChild(q); }
+
+    // ==== UTILIDADES ====
+    function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a }
+    function shuffleArray(arr){ return arr.slice().sort(()=>Math.random()-0.5) }
+    function randomLetter(){ const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ'; return A.charAt(randInt(0,A.length-1)) }
+
+    // ==== INIT ====
+    (function init(){
+      const lastUser=localStorage.getItem('sumaventura_last_user');
+      if(lastUser){ const s=loadStateForUser(lastUser); if(s){ state=s; state.user={name:lastUser}; } }
+      state.progress = state.progress || {};
+      buildWorlds();
+      if(state.user) onLogin();
+    })();
+
+    window.addEventListener('beforeunload', ()=>{ if(state.user && !state.user.guest) saveState(); });
+  </script>
+</body>
+</html>
